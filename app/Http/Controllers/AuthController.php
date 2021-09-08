@@ -6,6 +6,7 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Hash;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller {
 
@@ -36,7 +37,7 @@ class AuthController extends Controller {
     return Auth::user();
   }
 
-  public function register(Request $request) {
+  public function register(RegisterRequest $request) {
     try {
       $user = User::create([
         'first_name' => $request->input('first_name'),
