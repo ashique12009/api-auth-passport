@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Hash;
 
 class AuthController extends Controller {
 
@@ -12,7 +14,7 @@ class AuthController extends Controller {
       if (Auth::attempt($request->only('email', 'password'))) {
         $user  = Auth::user();
         $token = $user->createToken('app')->accessToken;
-  
+
         return response([
           'message' => 'success',
           'token'   => $token,
@@ -21,9 +23,9 @@ class AuthController extends Controller {
       }
     } catch (\Exception $exception) {
       return response([
-        'message' => $exception->getMessage()
+        'message' => $exception->getMessage(),
       ], 400);
-    }    
+    }
 
     return response([
       'message' => 'Invalid username/password',
@@ -32,6 +34,23 @@ class AuthController extends Controller {
 
   public function user() {
     return Auth::user();
+  }
+
+  public function register(Request $request) {
+    try {
+      $user = User::create([
+        'first_name' => $request->input('first_name'),
+        'last_name'  => $request->input('last_name'),
+        'email'      => $request->input('email'),
+        'password'   => Hash::make($request->input('password')),
+      ]);
+  
+      return $user;  
+    } catch (\Exception $exception) {
+      return response([
+        'message' => $exception->getMessage()
+      ], 400);
+    }    
   }
 
 }
